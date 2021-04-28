@@ -23,6 +23,7 @@
                         </div>
                         <vs-button dark style="margin:30px auto;width:100%;font-size:20px" @click="verificarInfo">Crear</vs-button>
                     </div>
+                    <vs-button dark size="large" style="margin:20px auto" @click="goAtras">Home 🏠</vs-button>
                 </div>
             </transition>
         </div>
@@ -45,11 +46,11 @@ export default{
         }
     },
     methods:{
+        goAtras(){
+            this.$router.push({name:"home"})
+        },
         changeShow(){
             this.show=!this.show
-        },
-        consumirServicio(){
-            console.log("asfaf")
         },
         verificarInfo(){
             if(this.name==null || this.last_name==null || this.email==null ||this.password==null ||this.phone==null ||this.payment_method==null || this.address==null 
@@ -64,10 +65,10 @@ export default{
                     text: 'Por favor llene todos los campos correspondientes'
                 })
             }else{
-                this.autenticar()
+                this.registrar()
             }
         },
-        autenticar(){
+        registrar(){
             let exito=true;
             if(exito){
                 let color="success"
