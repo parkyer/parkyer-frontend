@@ -12,7 +12,7 @@
                          <vs-input  primary state="primary" block v-model="password" type="password" style="margin-top:5px"/>
                  </div>
                 <vs-button primary style="margin:20px auto;width:100%;font-size:20px" @click="verificarInfo">Ingresar</vs-button>
-                <p>¿No tienes cuenta? <span style="color:#6FC629" @click="goRegister">Registrate ahora</span></p>
+                <p>¿No tienes cuenta? <span style="color:#6FC629;cursor:pointer" @click="goRegister">Registrate ahora</span></p>
             </div>
             <vs-button primary size="large" style="margin:20px auto" @click="goAtras">Home 🏠</vs-button>
         </div>
