@@ -4,11 +4,11 @@
             <img src="../../../assets/images/logo.jpg" alt="logo" style="width:250px">
         </div>
         <div class="buttons-container">
-            <vs-button size="large" style="width:200px" class="button-style" >Iniciar Sesión</vs-button>
-            <vs-button size="large" style="width:200px" class="button-style" >Registrarse</vs-button>
+            <vs-button size="large" style="width:200px" class="button-style" @click="goLogin">Iniciar Sesión</vs-button>
+            <vs-button size="large" style="width:200px" class="button-style" @click="goRegister">Registrarse</vs-button>
         </div>
         <p align="center" class="text">¿Buscas Parqueadero?</p>
-        <p align="center" class="subtext" style="margin-top:150px" @click="goContact">Contacto</p>
+        <p align="center" class="subtext" style="margin-top:50px" @click="goContact">Contacto</p>
         <p align="center" class="subtext" @click="goAbout">¿Quienes Somos?</p>
     </div>
 </template>
@@ -22,14 +22,18 @@ export default{
     },
     methods:{
         goAbout(){
-            console.log("click")
             this.$router.push({name:"about"})
         },
         goContact(){
-            console.log("click")
             this.$router.push({name:"contact"})
+        },
+        goLogin(){
+            this.$router.push({name:"login"})
+        },
+        goRegister(){
+            this.$router.push({name:"register"})
         }
-    }    
+    }, 
 }
 </script>
 
