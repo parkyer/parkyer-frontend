@@ -3,8 +3,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import Vuesax from 'vuesax'
+import 'boxicons'
 
-import 'vuesax/dist/vuesax.css' //Vuesax styles
+import 'vuesax/dist/vuesax.css' 
+
+//Vuesax styles
+import 'boxicons/css/boxicons.min.css'
 
 Vue.use(Vuesax, {
   colors: {
