@@ -8,6 +8,7 @@
             <vs-button size="large" style="width:200px" class="button-style" @click="goRegister">Registrarse</vs-button>
         </div>
         <p align="center" class="text">¿Buscas Parqueadero?</p>
+        <p align="center" class="subtext" style="margin-top:20px" @click="goContact">Contacto</p>
         <p align="center" class="subtext" @click="goAbout">¿Quienes Somos?</p>
     </div>
 </template>

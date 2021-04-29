@@ -5,16 +5,10 @@ import store from './store'
 import Vuesax from 'vuesax'
 import 'boxicons'
 
-<<<<<<< HEAD
 import 'vuesax/dist/vuesax.css' 
 
 //Vuesax styles
 import 'boxicons/css/boxicons.min.css'
-=======
-import 'vuesax/dist/vuesax.css' //Vuesax styles
-import 'material-icons/iconfont/material-icons.css';
-
->>>>>>> 14f429d5658952e79dcb70a971724092f7d80bd3
 
 Vue.use(Vuesax, {
   colors: {
