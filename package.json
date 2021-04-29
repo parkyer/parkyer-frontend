@@ -13,6 +13,7 @@
     "material-icons": "^0.6.1",
     "sass": "^1.32.11",
     "vue": "^2.6.11",
+    "vue-apollo": "^3.0.0-beta.11",
     "vue-icon": "^2.2.0",
     "vue-router": "^3.2.0",
     "vuesax": "^4.0.1-alpha.25",
@@ -27,7 +28,9 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "graphql-tag": "^2.9.0",
     "sass-loader": "^10",
+    "vue-cli-plugin-apollo": "~0.22.2",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {

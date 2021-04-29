@@ -5,10 +5,12 @@ import store from './store'
 import Vuesax from 'vuesax'
 import 'boxicons'
 
-import 'vuesax/dist/vuesax.css' 
+import 'vuesax/dist/vuesax.css'
 
 //Vuesax styles
 import 'boxicons/css/boxicons.min.css'
+
+import { createProvider } from './vue-apollo'
 
 Vue.use(Vuesax, {
   colors: {
@@ -25,5 +27,6 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
+  apolloProvider: createProvider(),
   render: h => h(App)
 }).$mount('#app')

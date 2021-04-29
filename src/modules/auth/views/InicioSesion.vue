@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+
 export default{
     data(){
         return{
@@ -55,7 +57,7 @@ export default{
                     text: 'Por favor llene todos los campos correspondientes'
                 })
             }else{
-                this.autenticar()
+                this.loginMutation()
             }
         },
         autenticar(){
@@ -79,6 +81,22 @@ export default{
                     text: 'Usuario o Contraseña incorrectos'
                 })
             }
+        },
+        async loginMutation(){
+            const result =this.$apollo.mutate({
+            // Mutation
+            mutation: gql`mutation ($correo: String!,$password:String!) {
+                iniciarSesion(login:{email:$correo,password:$password}) {
+                access
+                }
+            }`,
+            // Parameters
+            variables: {
+                correo: this.correo,
+                password:this.password
+            },
+            })
+            console.log(result)
         }
     },
     mounted(){
