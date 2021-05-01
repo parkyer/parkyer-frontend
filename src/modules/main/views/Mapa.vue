@@ -1,7 +1,22 @@
 <template>
   <div class="main-map">
     <div class="container">
-      <div class="mapa" style="float: left"></div>
+      <div class="mapa" style="float: left">
+        <l-map
+          style="height: 100%; width: 100%; border-radius:10px"
+          :zoom="zoom"
+          :center="center"
+          @update:zoom="zoomUpdated"
+          @update:center="centerUpdated"
+          @update:bounds="boundsUpdated"
+        >
+          <l-tile-layer :url="url"></l-tile-layer>
+          <l-marker
+          :lat-lng="[4.6458605, -74.0795711]"
+          :icon="icon" > </l-marker>
+          
+        </l-map>
+      </div>
       <div class="container-resultados" style="float: right">
         <vs-input  primary state="primary" block v-model="busqueda" style="width:80% ; margin:25px auto"/>
         <div class="resultados">
@@ -13,16 +28,45 @@
 </template>
 
 <script>
+import L from 'leaflet';
+import { LMap, LTileLayer, LMarker} from 'vue2-leaflet';
+//import { LMap, LTileLayer, LMarker, LIcon } from 'vue2-leaflet';
+
 export default{
   components:{
-    
+    LMap,
+    LTileLayer,
+    LMarker
   },
   data(){
     return{
-      busqueda:null
-      
+      busqueda:null,
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      zoom: 11,
+      center: [4.6486259, -74.1492351],
+      bounds: null,
+      icon: L.icon({
+        iconUrl:require('../../../assets/images/marker.svg'),
+  
+        iconSize: [32, 37],
+        iconAnchor: [16, 37]
+      }),
+      staticAnchor: [37, 37],
+      iconSize: 64
   }
-}
+},
+methods:{
+    zoomUpdated (zoom) {
+      this.zoom = zoom;
+    },
+    centerUpdated (center) {
+      this.center = center;
+    },
+    boundsUpdated (bounds) {
+      this.bounds = bounds;
+    }
+},
+
 }
 
 </script>
