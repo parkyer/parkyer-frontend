@@ -32,8 +32,18 @@ export default{
         },
         goRegister(){
             this.$router.push({name:"register"})
+        },
+        beforeEach(){
+            if(localStorage.getItem("id")){
+                this.$router.push({name:"main"})
+            }else{
+                console.log("permitido")
+            }
         }
-    }, 
+    },
+    mounted(){
+        this.beforeEach()
+    } 
 }
 </script>
 

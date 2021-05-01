@@ -15,13 +15,13 @@
                             <p>Contraseña</p>        
                             <vs-input  dark state="dark" block v-model="password" type="password" style="margin-top:5px"/>
                             <p>Teléfono</p>
-                            <vs-input  dark state="dark" block v-model="phone" style="margin-top:5px"/>
+                            <vs-input  dark state="dark" block v-model="phone" type="number" style="margin-top:5px"/>
                             <p>Metodo de Pago</p>
-                            <vs-input  dark state="dark" block v-model="payment_method" style="margin-top:5px"/>
+                            <vs-input  dark state="dark" block v-model="payment_method" type="number" style="margin-top:5px"/>
                             <p>Dirección</p>
                             <vs-input  dark state="dark" block v-model="address" style="margin-top:5px"/>
                         </div>
-                        <vs-button dark style="margin:30px auto;width:100%;font-size:20px" @click="verificarInfo">Crear</vs-button>
+                        <vs-button dark style="margin:30px auto;width:100%;font-size:20px" @click="verificarInfo" :loading=loading>Crear</vs-button>
                     </div>
                     <vs-button dark size="large" style="margin:20px auto" @click="goAtras">Home 🏠</vs-button>
                 </div>
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
 export default{
     data(){
         return{
@@ -42,7 +43,9 @@ export default{
             phone:null,
             payment_method:null,
             address:null,
-            visible:false
+            visible:false,
+            loading:false,
+            success:false
         }
     },
     methods:{
@@ -69,29 +72,76 @@ export default{
             }
         },
         registrar(){
-            let exito=true;
-            if(exito){
+            this.loading=true
+            this.registerMutation().then(()=>{
+            this.loading=false
+            if(this.success){
                 let color="success"
                 let position="top-right"
                 this.$vs.notification({
                     color,
                     position,
-                    title: 'Bienvenido',
-                    text: 'Inicio de Sesión exitoso'
+                    title: 'Registro Exitoso',
+                    text: 'Ya puedes iniciar sesión'
                 })
-            }else{
+                this.$router.push({name:"login"})
+            }
+            }).catch(error =>{
+                this.loading=false
+                console.log(error)
                 let color="danger"
                 let position="top-right"
                 this.$vs.notification({
                     color,
                     position,
                     title: 'Error',
-                    text: 'Revisa los datos ingresados'
+                    text: 'datos ingresados incorrectos'
                 })
+            })
+            
+        },
+
+        async registerMutation(){
+            const result =await this.$apollo.mutate({
+            // Mutation
+            mutation: gql`mutation ($name: String!,$last_name: String!,$email: String!,$password:String!,$phone: Int!,$payment_method: Int!,$address: String!) {
+                crearUsuario(usuario:{name:$name,last_name:$last_name,email:$email,password:$password,phone:$phone,payment_method:$payment_method,address:$address}) {
+                id
+                name
+                last_name
+                email
+                password
+                phone
+                payment_method
+                address
+                }
+            }`,
+            // Parameters
+            variables: {
+                name: this.name,
+                last_name:this.last_name,
+                email: this.email,
+                password:this.password,
+                phone:parseInt(this.phone),
+                payment_method:parseInt(this.payment_method),
+                address:this.address
+            },
+            })
+            console.log(result)
+            if(result.data.crearUsuario!=null){
+                this.success=true
+            }
+        },
+        beforeEach(){
+            if(localStorage.getItem("id")){
+                this.$router.push({name:"main"})
+            }else{
+                console.log("permitido")
             }
         }
     },
     mounted(){
+        this.beforeEach()
         this.changeShow()
     }
     

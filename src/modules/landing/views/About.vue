@@ -92,7 +92,17 @@ export default{
         goHome(){
             console.log("click")
             this.$router.push({name:"home"})
+        },
+        beforeEach(){
+            if(localStorage.getItem("id")){
+                this.$router.push({name:"main"})
+            }else{
+                console.log("permitido")
+            }
         }
+    },
+    mounted(){
+        this.beforeEach()
     }    
 }
 </script>

@@ -11,10 +11,10 @@
                           <p>Contraseña</p>        
                          <vs-input  primary state="primary" block v-model="password" type="password" style="margin-top:5px"/>
                  </div>
-                <vs-button primary style="margin:20px auto;width:100%;font-size:20px" @click="verificarInfo">Ingresar</vs-button>
+                <vs-button primary style="margin:20px auto;width:100%;font-size:20px" @click="verificarInfo" :loading=loading>Ingresar</vs-button>
                 <p>¿No tienes cuenta? <span style="color:#6FC629;cursor:pointer" @click="goRegister">Registrate ahora</span></p>
             </div>
-            <vs-button primary size="large" style="margin:20px auto" @click="goAtras">Home 🏠</vs-button>
+            <vs-button primary size="large" style="margin:20px auto" @click="goAtras" >Home 🏠</vs-button>
         </div>
         </transition>
     </div>       
@@ -32,7 +32,9 @@ export default{
             show:false,
             correo:null,
             password:null,
-            visible:false
+            visible:false,
+            success:false,
+            loading:false
         }
     },
     methods:{
@@ -57,12 +59,14 @@ export default{
                     text: 'Por favor llene todos los campos correspondientes'
                 })
             }else{
-                this.loginMutation()
+                this.autenticar()
             }
         },
         autenticar(){
-            let exito=true;
-            if(exito){
+            this.loading=true
+            this.loginMutation().then(()=>{
+            this.loading=false
+            if(this.success){
                 let color="success"
                 let position="top-right"
                 this.$vs.notification({
@@ -71,6 +75,7 @@ export default{
                     title: 'Bienvenido',
                     text: 'Inicio de Sesión exitoso'
                 })
+                this.$router.push({name:"main"})
             }else{
                 let color="danger"
                 let position="top-right"
@@ -81,13 +86,15 @@ export default{
                     text: 'Usuario o Contraseña incorrectos'
                 })
             }
+            })
         },
         async loginMutation(){
-            const result =this.$apollo.mutate({
+            const result =await this.$apollo.mutate({
             // Mutation
             mutation: gql`mutation ($correo: String!,$password:String!) {
                 iniciarSesion(login:{email:$correo,password:$password}) {
                 access
+                id
                 }
             }`,
             // Parameters
@@ -96,10 +103,24 @@ export default{
                 password:this.password
             },
             })
-            console.log(result)
+            console.log(result.data.iniciarSesion)
+            if(result.data.iniciarSesion.access=="Denied"){
+                this.success=false
+            }else{
+                this.success=true
+                localStorage.setItem("id",result.data.iniciarSesion.id)
+            }
+        },
+        beforeEach(){
+            if(localStorage.getItem("id")){
+                this.$router.push({name:"main"})
+            }else{
+                console.log("permitido")
+            }
         }
     },
     mounted(){
+        this.beforeEach()
         this.changeShow()
     }
     
