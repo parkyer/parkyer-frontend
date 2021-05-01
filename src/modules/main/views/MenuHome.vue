@@ -91,12 +91,12 @@ export default {
 }
 
 .caja1 {
-  width: 40%;
-  height: 200px;
+  width: 47%;
+  height: 220px;
   background-color: cornflowerblue;
 }
 .caja2 {
-  width: 50%;
+  width: 47%;
   height: 220px;
   background-color: rgb(197, 19, 241);
 }
@@ -105,7 +105,10 @@ export default {
   width: 80%;
   margin: 250px auto;
   height: 270px;
-  background-color: cornflowerblue;
+  background-color: rgb(231, 231, 231);
+  box-shadow: 0px 2px 10px rgb(197, 197, 197);
+  border-radius: 10px;
+
 }
 
 
