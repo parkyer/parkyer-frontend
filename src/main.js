@@ -3,6 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import Vuesax from 'vuesax'
+import Carousel3d from 'vue-carousel-3d';
+
 
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 
@@ -19,6 +21,7 @@ Vue.component('l-map', LMap);
 Vue.component('l-tile-layer', LTileLayer);
 Vue.component('l-marker', LMarker);
 
+Vue.use(Carousel3d);
 Vue.use(Vuesax, {
   colors: {
     primary:'#6DC62A',
