@@ -124,7 +124,7 @@ methods:{
   }
 },
 mounted(){
-  this.beforeEach()
+  //this.beforeEach()
 }
 }
 
