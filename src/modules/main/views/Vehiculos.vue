@@ -45,9 +45,8 @@
               </vs-tr>
             </template>
             <template #notFound>
-              No tienes Vehiculos 
+              No tienes ningún vehículo registrado.
             </template>
-
           </vs-table>
         </div>
     </div>
@@ -99,15 +98,15 @@
 
           <div class="con-form">
             <span class="p-float-label">
-              <vs-input label-placeholder="Tipo" primary block v-model="this.selected.tipo" ></vs-input>
+              <vs-input label-placeholder="Tipo" primary block v-model="vehicles.tipo" ></vs-input>
             </span>
             <br />
             <span class="p-float-label">
-                <vs-input label-placeholder="Tamaño" primary block  v-model="this.selected.tamano" ></vs-input>
+                <vs-input label-placeholder="Tamaño" primary block  v-model="vehicles.tamano" ></vs-input>
             </span>
             <br />
             <span class="p-float-label">
-                <vs-input label-placeholder="Descripción" primary block v-model="this.selected.descripcion" ></vs-input>
+                <vs-input label-placeholder="Descripción" primary block v-model="vehicles.descripcion" ></vs-input>
             </span>
             <br />
           </div>
@@ -135,7 +134,7 @@
           </template>
 
           <div class="confirmation-content">
-            <span>¿Estas seguro de eliminar tu vehiculo con Id {{this.selected.id}}? </span>
+            <span>¿Estas seguro de eliminar tu vehiculo con el Id {{this.selected.id}}? </span>
           </div>
 
           <template #footer>
@@ -165,14 +164,18 @@ export default{
     return{
       user_id: 1,
       vehicle: null,
-      vehicles: {},
+      vehicles: {
+        id: null,
+        tipo: null,
+        tamano: null,
+        descripcion: null
+      },
       selected: {},
       dialogCrear: false,
       dialogEditar: false,
       dialogEliminar: false,
-      edit: null,
-      editProp: {},
       exito:null,
+      info: null,
       value: '',
       persist:[],
       loading:false,
@@ -181,6 +184,9 @@ export default{
       descripcion: null,
       tipos: [
         'Carro', 'Moto', 'Camioneta', 'Camión', 'Otro Vehiculo'
+      ],
+      tamanos: [
+        'Grande', 'Mediano', 'Pequeno'
       ]
     }
   },
@@ -265,7 +271,6 @@ export default{
     showEditmodal(){
       this.dialogEditar = true;
       this.vehicles = this.selected;
-      console.log(this.vehicles);
     },
     async getVehicles() {
       //let user_id=parseInt(localStorage.getItem("id"))
@@ -286,8 +291,6 @@ export default{
               id: this.user_id,
             },
           });
-
-          console.log(result.data.getVehicle);
           this.vehicle=result.data.getVehicle;
       },
       async createVehicle() {
@@ -314,7 +317,7 @@ export default{
             this.info=result.data.createVehicle;
         },
         editarVehiculo(){
-          if(this.selected.tipo=="" || this.selected.tamano=="" || this.selected.descripcion==""){
+          if(this.vehicles.tipo=="" || this.vehicles.tamano=="" || this.vehicles.descripcion==""){
             let color="warn"
             let position="top-right"
             this.$vs.notification({
@@ -340,10 +343,7 @@ export default{
             title: 'Información Editada',
             text: 'cambios aplicados correctamente'
           })
-            this.exito=true
-            this.tipo=this.selected.tipo
-            this.tamano=this.selected.tamano
-            this.descripcion=this.selected.descripcion
+            this.exito = true
             this.dialogEditar=!this.dialogEditar
             
           }).catch(error =>{
@@ -364,8 +364,8 @@ export default{
           //let user_id=parseInt(localStorage.getItem("id"))
           const result =await this.$apollo.mutate({
           // Mutation
-          mutation: gql`mutation ($id:Int!,$tipo:String!,$tamano:String!,$descripcion:String!){
-            updateVehicle(id:$id_vehicle:{tipo:$tipo, tamano:$tamano, descripcion:$descripcion}) {
+          mutation: gql`mutation ($id_vehicle:Int!,$tipo:String!,$tamano:String!,$descripcion:String!){
+            updateVehicle(id:$id_vehicle, vehicle:{tipo:$tipo, tamano:$tamano, descripcion:$descripcion}) {
               tipo
               tamano
               descripcion
@@ -373,10 +373,10 @@ export default{
           }`,
           // Parameters
           variables: {
-            id_vehicle: this.selected.id,
-            tipo: this.selected.tipo,
-            tamano:this.selected.tamano,
-            descripcion: this.selected.descripcion,
+            id_vehicle: this.vehicles.id,
+            tipo: this.vehicles.tipo,
+            tamano:this.vehicles.tamano,
+            descripcion: this.vehicles.descripcion,
             },
           })
           this.info=result.data.updateUser
