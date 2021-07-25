@@ -11,16 +11,45 @@
           @update:bounds="boundsUpdated"
         >
           <l-tile-layer :url="url"></l-tile-layer>
-          <l-marker
-          :lat-lng="[4.6458605, -74.0795711]"
-          :icon="icon" > </l-marker>
+          <l-marker 
+            v-for="parking in parkingLots"
+            :key="parking.id"
+            :lat-lng="[parking.latitude, parking.longitude]"
+            :icon="icon"
+            @click="selectedParking(parking.id)" > </l-marker>
           
         </l-map>
       </div>
       <div class="container-resultados" style="float: right">
-        <vs-input  primary state="primary" block v-model="busqueda" style="width:80% ; margin:25px auto"/>
+        <vs-input  
+          primary state="primary"
+          icon-after
+          block
+          v-model="busqueda"
+          style="width: 80%; margin:20px auto"
+           @click-icon="search"
+        >
+          <template #icon>
+            <i class='bx bx-search-alt'></i>
+          </template>
+        </vs-input>
+        <div class="title">
+          <p>
+            <span style="margin-left:40px">Parking</span>
+            <span style="margin-right:20px">Tipo</span>
+          </p>
+        </div>
         <div class="resultados">
-          
+        <div  class="item" v-for="parking in parkingLots" :key="parking.id" @click="selectedParking(parking.id)">
+            <p>
+              <span style="width:40%" >{{parking.location}} </span>
+              <span>|</span>
+              <span >{{parking.type}}
+                <i v-if="parking.type=='carro'" class='bx bxs-car-garage'></i>
+                <i v-else class='bx bx-cycling'></i>
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -28,6 +57,7 @@
 </template>
 
 <script>
+import gql from "graphql-tag";
 import L from 'leaflet';
 import { LMap, LTileLayer, LMarker} from 'vue2-leaflet';
 //import { LMap, LTileLayer, LMarker, LIcon } from 'vue2-leaflet';
@@ -52,7 +82,10 @@ export default{
         iconAnchor: [16, 37]
       }),
       staticAnchor: [37, 37],
-      iconSize: 64
+      iconSize: 64,
+      res:null,
+      parkingLots:[],
+      filterParkingLots:[]
   }
 },
 methods:{
@@ -64,8 +97,63 @@ methods:{
     },
     boundsUpdated (bounds) {
       this.bounds = bounds;
+    },
+    search(){
+      this.filterParkingLots=[]
+      if(this.busqueda!=null && this.busqueda.length!="+"){
+        for(let i=0;i < this.res.length;i++){
+          let dir=String(this.res[i].location)
+          if(dir.includes(String(this.busqueda))){
+            console.log('coincidencia')
+            this.filterParkingLots.push(this.res[i]) 
+        }
+        this.parkingLots=this.filterParkingLots
+      }
+      }else{
+        console.log(this.res)
+        this.parkingLots=this.res
+      }
+      
+    },
+    selectedParking(id){
+      for(let i=0;i<this.parkingLots.length;i++){
+        if(id== this.parkingLots[i].id){
+          console.log(this.parkingLots[i])
+        }
+      }
+    },
+    asignarInfo(){
+      this.getAvailableParkings().then(()=>{
+        this.parkingLots=this.res
+        console.log(this.parkingLots)
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
+    async getAvailableParkings(){
+      const result=await this.$apollo.query({
+        // Query
+        query: gql`
+          query {
+            getAvailableParkings{
+              id
+              id_owner
+              id_client
+              latitude
+              longitude
+              location
+              type
+            }
+          }
+        `,
+      });
+      console.log(result.data.getAvailableParkings);
+      this.res=result.data.getAvailableParkings
     }
 },
+mounted(){
+  this.asignarInfo()
+}
 
 }
 
@@ -87,27 +175,55 @@ methods:{
 
 .mapa{
   width: 62%;
-  height: 470px;
+  height: 480px;
   background-color: rgb(178, 179, 180);
   border-radius: 10px;
   box-shadow: 0px 2px 10px rgb(145, 145, 145);
 }
 .container-resultados{
   width: 35%;
-  height: 470px;
+  height: 480px;
   background-color: rgb(253, 253, 253);
   border-radius: 10px;
   box-shadow: 0px 2px 10px rgb(214, 213, 213);
 }
+
+.title{
+  width: 80%;
+  margin:10px auto;
+
+  p{
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+  }
+}
+
 .resultados{
   width: 80%;
   height: 350px;
-  background-color: rgb(228, 228, 228);
   margin: auto;
   border-radius: 10px;
-
+  overflow: auto;
 }
 
+.item{
+  background-color: rgb(233, 229, 229);
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px;
+  cursor: pointer;
+  p{
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.item:hover{
+  background-color: rgb(232, 248, 232);
+  box-shadow: 0px 2px 10px rgb(214, 213, 213);
+  padding: 15px;
+}
 
 
 </style>

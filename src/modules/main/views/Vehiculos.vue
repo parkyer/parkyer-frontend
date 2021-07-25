@@ -402,6 +402,8 @@ export default{
           },*/
   },
   mounted(){
+    this.user_id=localStorage.getItem('id')
+    console.log(this.user_id)
     this.getVehicles();
     //this.getAllVehicles();
   } 
