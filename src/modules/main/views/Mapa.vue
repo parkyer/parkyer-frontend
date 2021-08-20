@@ -40,7 +40,7 @@
           </p>
         </div>
         <div class="resultados">
-        <div  class="item" v-for="parking in parkingLots" :key="parking.id" @click="selectedParking(parking.id)">
+          <div  class="item" v-for="parking in parkingLots" :key="parking.id" @click="selectedParking(parking.id)">
             <p>
               <span style="width:40%" >{{parking.location}} </span>
               <span>|</span>
@@ -53,6 +53,15 @@
         </div>
       </div>
     </div>
+    <vs-dialog v-model="suscriptionModal">
+      <template #header>
+        <p> ¿Deseas reservar este parqueadero: </p>
+      </template>
+      <div class="sus-button-container">
+        <vs-button @click="reservar" :loading=loading>Reservar</vs-button>
+        <vs-button @click="suscriptionModal=!suscriptionModal">Cancelar</vs-button>
+      </div>
+    </vs-dialog>
   </div>
 </template>
 
@@ -85,7 +94,10 @@ export default{
       iconSize: 64,
       res:null,
       parkingLots:[],
-      filterParkingLots:[]
+      filterParkingLots:[],
+      suscriptionModal: false,
+      selectedId: Object,
+      loading: false
   }
 },
 methods:{
@@ -118,14 +130,61 @@ methods:{
     selectedParking(id){
       for(let i=0;i<this.parkingLots.length;i++){
         if(id== this.parkingLots[i].id){
-          console.log(this.parkingLots[i])
+          console.log(this.parkingLots[i].id)
+          this.selectedId=this.parkingLots[i]
+          this.suscriptionModal=!this.suscriptionModal
         }
       }
+    },
+    reservar(){
+      this.loading=!this.loading
+      this.newSuscription().then(()=>{
+        this.loading=!this.loading
+        let color="success"
+        let position="top-right"
+        this.$vs.notification({
+          color,
+          position,
+          title: 'Parqueadero Reservado Correctamente',
+          text: 'cambios aplicados correctamente'
+        })
+        location.reload()
+        this.suscriptionModal=!this.suscriptionModal
+      }).catch(error=>{
+        this.loading=!this.loading
+        //notificacion de error
+        let color="danger"
+        let position="top-right"
+        this.$vs.notification({
+          color,
+          position,
+          title: 'Error',
+          text: error
+        })
+        //cerrar el modal
+        this.suscriptionModal=!this.suscriptionModal,
+        this.selectedId={}
+      })
+    },
+    async newSuscription(){
+       let user_id=parseInt(localStorage.getItem("id"))
+      const result=await this.$apollo.mutate({
+        mutation: gql`mutation ($id: Int!, $idClient: String!){
+          newSuscription(id: $id, client:{ id_client: $idClient}){
+            id_client
+          }
+        }`,
+        //Parameters
+        variables: {
+          id: this.selectedId.id,
+          idClient: user_id
+        }
+      })
+      console.log(result)
     },
     asignarInfo(){
       this.getAvailableParkings().then(()=>{
         this.parkingLots=this.res
-        console.log(this.parkingLots)
       }).catch(error=>{
         console.log(error)
       })
@@ -223,6 +282,13 @@ mounted(){
   background-color: rgb(232, 248, 232);
   box-shadow: 0px 2px 10px rgb(214, 213, 213);
   padding: 15px;
+}
+
+.sus-button-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row
 }
 
 
