@@ -3,31 +3,48 @@
     <div class="container">
       <div class="caja1" style="float: left">
         <p style="font-weight:bold">Parqueaderos en Uso</p>
-        <carousel-3d class="carousel" :width="300" :height="160" style="margin-top:10px">
-        <slide :index="0" class="slider">
-          Slide 1 Content
-        </slide>
-        <slide :index="1" class="slider">
-          Slide 2 Content
-        </slide>
-        <slide :index="2" class="slider">
-          Slide 3 Content
+        <carousel-3d 
+          class="carousel"
+          :width="300"
+          :height="160"
+          style="margin-top:10px"
+          :autoplay="true"
+          :autoplay-timeout="1500"
+          v-show="pAlquilados.length!=0">
+        <slide v-for="(p,i) in pAlquilados" :key="i" :index="i" class="slider">
+          <div class="slider-div">
+            <p>Id: {{p.id}}</p>
+            <p>Tipo: {{p.type}}</p>
+            <p>Ubicación: 
+              <span style="font-weight:bold; font-size:20px">{{p.location}}</span>
+            </p>
+          </div>
         </slide>
       </carousel-3d>
+      <div v-show="pAlquilados.length == 0">No Hay parqueaderos Reservados</div>
       </div>
       <div class="caja2" style="float: right" >
         <p style="font-weight:bold">Parqueaderos en Alquiler</p>
-        <carousel-3d class="carousel" :width="300" :height="160" style="margin-top:10px">
-        <slide :index="0" class="slider">
-          Slide 1 Content
-        </slide>
-        <slide :index="1" class="slider">
-          Slide 2 Content
-        </slide>
-        <slide :index="2" class="slider">
-          Slide 3 Content
-        </slide>
+        <carousel-3d 
+          class="carousel"
+          :width="300"
+          :height="160"
+          style="margin-top:10px"
+          :autoplay="true"
+          :autoplay-timeout="1500"
+          v-show="pEnAlquiler.length!=0"
+          >
+            <slide v-for="(p,i) in pEnAlquiler" :key="i" :index="i" class="slider">
+              <div class="slider-div">
+                <p>Id: {{p.id}}</p>
+                <p>Tipo: {{p.type}}</p>
+                <p>Ubicación: 
+                  <span style="font-weight:bold; font-size:20px">{{p.location}}</span>
+                </p>
+              </div>
+            </slide>
       </carousel-3d>
+      <div v-show="pEnAlquiler.length == 0">No Hay parqueaderos Reservados</div>
       </div>
     </div>
     <div class="container2">
@@ -78,9 +95,78 @@ export default {
     max: 5,
     card: 6,
     user: 32,
-    Regs: null
+    Regs: null,
+    res: null,
+    res2: null,
+    pAlquilados: [],
+    pEnAlquiler: []
   }),
   methods: {
+
+    parqueaderosEnAlquiler(){
+      this.getOwnerParkingLots().then(()=>{
+        this.pEnAlquiler=this.res2
+        console.log(this.pEnAlquiler)
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
+    async getOwnerParkingLots(){
+      let user_id=parseInt(localStorage.getItem("id"))
+      const result=await this.$apollo.query({
+        //Query
+        query:gql`
+          query($id: Int!){
+             getOwnerParkingLots(id: $id){
+                id
+                id_owner
+                id_client
+                latitude
+                longitude
+                location
+                type
+             }
+          }
+        `,
+        //Parameters
+        variables:{
+          id: user_id
+        }
+      })
+      this.res2=result.data.getOwnerParkingLots
+    },
+    parqueaderosReservados(){
+      this.getParkingsUsedBy().then(()=>{
+        this.pAlquilados=this.res
+        console.log(this.pAlquilados)
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
+    async getParkingsUsedBy(){
+      let user_id=parseInt(localStorage.getItem("id"))
+      const result= await this.$apollo.query({
+        //Query
+        query:gql`
+          query($id: Int!){
+             getParkingsUsedBy(id: $id){
+                id
+                id_owner
+                id_client
+                latitude
+                longitude
+                location
+                type
+             }
+          }
+        `,
+        //PArameters
+        variables:{
+          id: user_id
+        }
+      })
+      this.res=result.data.getParkingsUsedBy
+    },
     async registersQuery() {
       const result = await this.$apollo.query({
         // Query
@@ -104,6 +190,8 @@ export default {
   },
   mounted() {
     this.registersQuery();
+    this.parqueaderosReservados();
+    this.parqueaderosEnAlquiler()
   },
 };
 </script>
@@ -111,7 +199,8 @@ export default {
 <style lang="scss" scoped>
 .main-home {
   min-height: 100vh;
-  background: #cee1e5;
+  background: rgb(206,225,229);
+  background: linear-gradient(180deg, rgba(206,225,229,1) 0%, rgba(223,221,255,1) 10%, rgba(0,255,87,0.3799894957983193) 100%);
   padding-left: 70px;
 }
 .container {
@@ -143,8 +232,17 @@ export default {
 
 .slider{
   border-radius: 10px;
-  border-style: solid;
-  border-color:rgb(187, 194, 192)
+  border-style: hidden;
+  border-color:rgb(187, 194, 192);
+  background-color: rgba(187, 194, 192, 0.5);
 }
+
+.slider-div{
+  width: fit-content;
+  margin-left: 20%;
+  margin-top: 10%;
+
+}
+
 
 </style>

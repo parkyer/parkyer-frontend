@@ -221,7 +221,8 @@ mounted(){
 <style lang="scss" scoped>
 .main-map{
   min-height: 100vh;
-  background: #CEE1E5;
+  background: rgb(206,225,229);
+  background: linear-gradient(180deg, rgba(206,225,229,1) 0%, rgba(223,221,255,1) 10%, rgba(0,255,87,0.3799894957983193) 100%);
   padding-left: 70px;
 
 }
