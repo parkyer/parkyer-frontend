@@ -162,7 +162,7 @@ export default{
   },
   data(){
     return{
-      user_id: 1,
+      user_id: 2,
       vehicle: null,
       vehicles: {
         id: null,
@@ -402,7 +402,7 @@ export default{
           },*/
   },
   mounted(){
-    this.user_id=localStorage.getItem('id')
+    //this.user_id=localStorage.getItem('id')
     console.log(this.user_id)
     this.getVehicles();
     //this.getAllVehicles();
