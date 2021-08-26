@@ -94,7 +94,7 @@ export default {
     page: 1,
     max: 5,
     card: 6,
-    user: 32,
+    user: null,
     Regs: null,
     res: null,
     res2: null,
@@ -189,6 +189,7 @@ export default {
     },
   },
   mounted() {
+    this.user=parseInt(localStorage.getItem("id"))
     this.registersQuery();
     this.parqueaderosReservados();
     this.parqueaderosEnAlquiler()

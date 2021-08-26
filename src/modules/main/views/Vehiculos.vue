@@ -162,7 +162,7 @@ export default{
   },
   data(){
     return{
-      user_id: 2,
+      user_id: null,
       vehicle: null,
       vehicles: {
         id: null,
@@ -402,7 +402,7 @@ export default{
           },*/
   },
   mounted(){
-    //this.user_id=localStorage.getItem('id')
+    this.user_id=parseInt(localStorage.getItem("id"))
     console.log(this.user_id)
     this.getVehicles();
     //this.getAllVehicles();
@@ -426,6 +426,8 @@ export default{
   height: 470px;
   border-radius: 10px;
   top: 70px;
+  background-color:rgb(230, 237, 238);
+  box-shadow: 0px 2px 10px rgb(197, 197, 197);
 }
 
 .buttons-container{

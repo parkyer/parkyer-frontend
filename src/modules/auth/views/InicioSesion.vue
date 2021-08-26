@@ -95,6 +95,7 @@ export default{
                 iniciarSesion(login:{email:$correo,password:$password}) {
                 access
                 id
+                token
                 }
             }`,
             // Parameters
@@ -109,6 +110,7 @@ export default{
             }else{
                 this.success=true
                 localStorage.setItem("id",result.data.iniciarSesion.id)
+                localStorage.setItem("token", result.data.iniciarSesion.token)
             }
         },
         beforeEach(){

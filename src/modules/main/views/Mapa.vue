@@ -136,6 +136,36 @@ methods:{
         }
       }
     },
+    crearRegistro(){
+      this.createRegister().then(()=>{
+        location.reload()
+      }).catch(()=>{
+        location.reload()
+      })
+    },
+    async createRegister(){
+      const fecha= new Date()
+      const result= await this.$apollo.mutate({
+        //Mutation
+        mutation: gql` mutation($user: Int!, $parkingId: Int!, $type: String!, $date: String!){
+          createRegister(Register:{user:$user, parkingId: $parkingId, type: $type, date: $date}){
+            Id
+            User
+            ParkingId
+            Type
+            Date
+          }
+        }`,
+        //Parameters
+        variables:{
+          user:parseInt(localStorage.getItem("id")),
+          parkingId:this.selectedId.id,
+          type: this.selectedId.type,
+          date: String(fecha.toDateString())
+        }
+      })
+      console.log(result.data.createRegister)
+    },
     reservar(){
       this.loading=!this.loading
       this.newSuscription().then(()=>{
@@ -148,7 +178,7 @@ methods:{
           title: 'Parqueadero Reservado Correctamente',
           text: 'cambios aplicados correctamente'
         })
-        location.reload()
+        this.crearRegistro()
         this.suscriptionModal=!this.suscriptionModal
       }).catch(error=>{
         this.loading=!this.loading
